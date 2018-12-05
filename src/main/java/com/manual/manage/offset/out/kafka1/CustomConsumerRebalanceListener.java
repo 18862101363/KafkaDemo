@@ -1,7 +1,6 @@
-package com.manual.manage.offset.out.kafka;
+package com.manual.manage.offset.out.kafka1;
 
 import com.manual.DataProcess;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -11,7 +10,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 第一次加入消费者组的时候，rebalance会执行，也就是启动本地consumer的时候，当有其他消费者加入的时候也会调用。

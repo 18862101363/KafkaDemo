@@ -1,4 +1,4 @@
-package com.manual.manage.offset.out.kafka;
+package com.manual.manage.offset.out.kafka1;
 
 import com.manual.DataProcess;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -42,6 +42,7 @@ public class MyKafkaConsumer implements Runnable {
         props.put("group.id", consumerGroupId);
         props.put("enable.auto.commit", "false");//false
         props.put("auto.commit.interval.ms", "1000");
+        props.put("max.poll.interval.ms", "20000");  // consumer每次poll调用的时间间隔，超过这个间隔，即使consumer还往kafka发送heartbeat存活着，这时也被认为没有能力进行下一次的poll动作，则consumer将停止发送心跳，然后发送LeaveGroup请求主动离组，从而引发coordinator开启新一轮rebalance。
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
@@ -132,7 +133,9 @@ public class MyKafkaConsumer implements Runnable {
                 buffer.clear();
             }
             try {
+//                System.out.println("going to sleep ....");
                 Thread.sleep(6000);
+//                System.out.println("going to poll ....");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
