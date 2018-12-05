@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+
 import java.util.*;
 
 /**
@@ -89,6 +90,10 @@ public class MyKafkaConsumer implements Runnable {
 
 
     /**
+     *
+     * 消息和offset都处理成功
+     * 或者
+     * 跳过该错误批次消息，单单更新offset
      *
      * @param errorCount_currentBatch    当前批次消息已经连续处理出错次数
      */

@@ -21,7 +21,7 @@ public class ConsumerSameGroup {
         DataProcess dataProcess = context.getBean(DataProcess.class);
 
 
-        String TOPIC = "topic3";
+        String TOPIC = "topic1";
         Properties props = new Properties();
         props.put("bootstrap.servers", "172.16.62.128:9092,172.16.62.129:9092,172.16.62.130:9092");
         props.put("group.id", "group1");
