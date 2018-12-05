@@ -69,7 +69,7 @@ public class MyKafkaConsumer implements Runnable {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(100000);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(consumerName + ":    " + record.topic() + "----" + record.partition() + "----" + record.value());
+                System.out.println(consumerName + ":    ----topic:" + record.topic() + "----partition: " + record.partition()  + "----offset: " + record.offset()+ "----value" + record.value());
                 buffer.add(record);
             }
 
