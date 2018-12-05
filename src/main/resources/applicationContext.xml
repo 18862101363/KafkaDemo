@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+
+
+
+	<context:component-scan base-package="com">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" /> 
+			<!-- <context:exclude-filter type="regex" expression="com.schedule.task.*"/> -->
+	</context:component-scan>
+	
+	<!-- <bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean" autowire="byName" >
+		<property name="location" value="classpath:system.properties"/>
+	</bean> -->
+	
+	<bean id="propertyConfigurer"
+		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<!--<value>classpath:system.properties</value>-->
+			</list>
+		</property>
+	</bean>
+
+	<!-- hibernate的配置 -->
+	<!-- 配置数据源:spring自带的数据源 -->
+	<!-- <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@10.21.9.40:1521/LIMSDEV" />
+		<property name="username" value="li_xia" />
+		<property name="password" value="lixia123456" />
+	</bean>  -->
+
+
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		  destroy-method="close">
+		<property name="driverClass" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="user" value="lims01"></property>
+		<property name="password" value="password123"></property>
+		<property name="jdbcUrl" value="jdbc:oracle:thin:@10.21.254.213:1521/orcl"></property>
+		<!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="20" />
+		<!--连接池中保留的最小连接数。 -->
+		<property name="minPoolSize" value="20" />
+		<!--连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="100" />
+		<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="60" />
+		<property name="debugUnreturnedConnectionStackTraces"><value>true</value></property>
+		<property name="unreturnedConnectionTimeout" value="100"></property>
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="5" />
+		<!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="idleConnectionTestPeriod" value="60" />
+	</bean>
+
+
+	<!-- 配置SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">false</prop>
+			</props>
+		</property>
+	
+		<property name="annotatedClasses">
+			<list>
+				<!-- <value>com.entity.*</value> -->
+				<!--<value>com.entity.AAAAAA</value>-->
+			</list>
+		</property>
+	</bean> 
+
+
+
+	<!-- spring声明式事务管理 采用AOP设计思想 -->
+	<!-- 管理事务的管家 -->
+	 <bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean> 
+
+
+	
+	 <tx:annotation-driven transaction-manager="transactionManager" /> 
+	 
+	  <aop:aspectj-autoproxy proxy-target-class="true"/> 
+	 
+	<!-- <aop:config>
+		<aop:aspect  ref="myServiceAOP">
+			<aop:after-returning
+					pointcut="@annotation(com.annotation.WXNCOpeLog)"
+					method="afterReturn" />
+			<aop:after-throwing 
+					pointcut="@annotation(com.annotation.WXNCExOpeLog)"
+					throwing="throwable" method="afterThrow" />
+		</aop:aspect>
+	</aop:config>  -->
+	 
+
+	<!-- <tx:advice id="txAdvice" transaction-manager="transactionManager"> 
+		<tx:attributes> <tx:method name="*" propagation="REQUIRED" /> </tx:attributes> 
+		</tx:advice> <aop:config proxy-target-class="true"> <aop:pointcut id="basePointcut" 
+		expression="execution(* com.service.DefaultService.*(..))" /> <aop:advisor 
+		advice-ref="txAdvice" pointcut-ref="basePointcut" /> </aop:config> -->
+
+	
+
+
+
+
+
+	<!-- <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+		<property name="locations"> <list> <value>classpath:jedispoolconf.properties</value> 
+		<value>classpath:sysconf.properties</value> </list> </property> </bean> <bean 
+		id="poolConfig" class="redis.clients.jedis.JedisPoolConfig"> <property name="maxIdle" 
+		value="${redis.maxIdle}" /> <property name="maxActive" value="${redis.maxActive}" 
+		/> <property name="maxWait" value="${redis.maxWait}" /> <property name="testOnBorrow" 
+		value="${redis.testOnBorrow}" /> </bean> <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
+		p:host-name="${redis.host}" p:port="${redis.port}" p:pool-config-ref="poolConfig"/> 
+		<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"> 
+		<property name="connectionFactory" ref="connectionFactory" /> </bean> -->
+
+	<!-- <bean id="transactionManager" class="org.springframework.data.redis.core.RedisConnectionUtils.RedisTransactionSynchronizer"> 
+		<property name="factory" ref="connectionFactory" /> </bean> <tx:advice transaction-manager="transactionManager" 
+		id="txAdvice"> <tx:attributes> <tx:method name="find*" read-only="true"/> 
+		<tx:method name="*" propagation="REQUIRED"/> </tx:attributes> </tx:advice> 
+		<aop:config> <aop:pointcut id="txpointCut" expression="execution(* com.service.*.*(..))"/> 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txpointCut"/> </aop:config> -->
+
+
+
+
+
+	<!-- -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</beans>
