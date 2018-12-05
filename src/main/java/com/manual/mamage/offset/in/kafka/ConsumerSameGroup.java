@@ -42,7 +42,7 @@ public class ConsumerSameGroup {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(100000);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println("consumer1: " + record.topic() + "----" + record.partition() + "----" + record.value());
+                System.out.println("consumer1:     ----topic: " + record.topic() + "----partition: " + record.partition()  + "----offset: " + record.offset()+ "----value: " + record.value());
                 buffer.add(record);
             }
 

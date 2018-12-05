@@ -11,6 +11,12 @@ import java.util.*;
 
 /**
  * https://kafka.apache.org/21/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html    API
+ *
+ *
+ * offset保存在kafka的内部 __consumer_offsets ， 处理方式与下面类似。
+ *
+ *
+ * 目前我个人觉得下面处理方式最好， exact-once
  */
 public class MyKafkaConsumer implements Runnable {
 
@@ -71,7 +77,7 @@ public class MyKafkaConsumer implements Runnable {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(100000);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(consumerName + ":    ----topic:" + record.topic() + "----partition: " + record.partition()  + "----offset: " + record.offset()+ "----value" + record.value());
+                System.out.println(consumerName + ":    ----topic: " + record.topic() + "----partition: " + record.partition()  + "----offset: " + record.offset()+ "----value: " + record.value());
                 buffer.add(record);
             }
 
